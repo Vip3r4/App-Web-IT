@@ -9,12 +9,12 @@
  - La serre sera aussi équipée d'un éclairage. L’éclairage fonctionnera 16h/jour. Nous ajouterons ici une alarme sonore en cas de panne de l'éclairage. En effet, une absence de lumière trop longue serait fatale aux plantes.
 
 ### La Serre Connectée aura donc :
- - Une carte Arduino Uno branchée via USB au PC.
- - Un moteur pour l'ouverture, qui peut être contrôlée par un potentiomètre pour régler la hauteur de l'ouverture.
- - Un système de "chauffement" qui pourra se contrôler par un potentiomètre.
- - Un système d'éclairage qui fonctionnera 16h/Jour.
- - 3 LEDS de couleur différente pour représenter l'état de la serre : Rouge, Jaune et Vert.
- - Buzzer qui agit comme alarme en cas de panne de l'éclairage.
+ - Une carte **Arduino Uno** branchée via USB au PC.
+ - Un **moteur** pour l'ouverture, qui peut être contrôlée par un potentiomètre pour régler la hauteur de l'ouverture.
+ - Un **système de "chauffement"** qui pourra se contrôler par un potentiomètre.
+ - Un **système d'éclairage** qui fonctionnera 16h/Jour.
+ - **3 LEDS de couleur** différente pour représenter l'état de la serre : Rouge, Jaune et Vert.
+ - **Buzzer** qui agit comme alarme en cas de panne de l'éclairage.
 
 
 ### La Serre Connectée pourra donc :
