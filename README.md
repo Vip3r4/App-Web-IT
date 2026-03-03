@@ -18,4 +18,5 @@
 
 
 ### La Serre Connectée pourra donc :
- - Permettre d'avoir un accès direct et local aux informations comme la température de la Serre, l'état de l'éclairage,
+ - Permettre d'avoir un accès direct et local aux informations comme la température de la Serre, l'état de l'éclairage
+ - Avoir aussi un accès aux informations de la Serre via un site Web
