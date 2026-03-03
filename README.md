@@ -1,6 +1,6 @@
 # Projet Serre
 
-### La serre connectée devra correspondre à ces 3 points :
+### La Serre Connectée devra maitriser ces 3 points :
 
  - Afin d'assurer la ventilation de la serre, prévoir un couvercle motorisé qui permettra le renouvellement de l'air. Le choix de l’angle d’ouverture (entre 5° et 15°) se fera par un potentiomètre que l’utilisateur pourra régler suivant les besoins et les types de plantes.
 
