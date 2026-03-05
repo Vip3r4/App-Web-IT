@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
 
 body {
   margin: 0;
@@ -6,18 +6,17 @@ body {
   background:
     
     radial-gradient(
-      ellipse at bottom center,
-      rgba(16, 185, 129, 0.45) 0%,
-      rgba(16, 185, 129, 0.25) 25%,
-      rgba(0, 0, 0, 0) 60%
+    ellipse at bottom center,
+        rgba(167, 139, 250, 0.45) 0%,
+        rgba(167, 139, 250, 0.25) 25%,
+        rgba(0, 0, 0, 0) 60%
     ),
 
-    
     radial-gradient(
-      ellipse at center,
-      rgba(5, 150, 105, 0.55) 0%,
-      rgba(4, 120, 87, 0.35) 25%,
-      rgba(0, 0, 0, 0.92) 70%
+        ellipse at center,
+        rgba(139, 92, 246, 0.50) 0%,
+        rgba(124, 58, 237, 0.30) 25%,
+        rgba(0, 0, 0, 0.92) 70%
     ),
 
     
@@ -27,6 +26,7 @@ body {
 }
 
 header {
+    position: relative;
     background-color: transparent;
     backdrop-filter: blur(20px);
     display: flex;
@@ -46,17 +46,18 @@ header h2 {
 
 main h1{
     color: white;
-    font-size: 40px;
+    font-size: 50px;
     text-align: center;
-    font-family: Arial, sans-serif;
+    font-family: "Inter";
+    font-weight: 400;
     margin-top: 40px;
 }
 
-main h2 {
-    color: rgba(175, 175, 175, 0.295);
+.who {
+    color: rgba(175, 175, 175, 0.418);
     font-size: 15px;
     text-align: center;
-    font-family: Arial, sans-serif;
+    font-family: "Inter";
     margin-top: 20px;
 }
 
@@ -70,7 +71,7 @@ main h2 {
     background-color: transparent;
     backdrop-filter: blur(60px);
     color: white;
-    font-family: "Montserrat", sans-serif;
+    font-family: "Inter";
     font-weight: 700;
     border-radius: 50px;
     border: solid 1px rgb(128, 128, 128);
@@ -85,7 +86,7 @@ header a {
     margin-right: 40px;
     height: 45px;
     padding: 0 20px;
-    font-family: "Montserrat", sans-serif;
+    font-family: "Inter";
     font-weight: 700;
     border-radius: 40px;
     border: solid 1px rgb(128, 128, 128);
@@ -100,7 +101,9 @@ header a {
 }
 
 nav {
-    margin-left: 330px;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
 }
 
 nav ul {
@@ -146,8 +149,76 @@ nav a:hover {
     color: rgb(255, 255, 255);
 }
 
+a {
+    text-decoration: none;
+}
+
+.start-btn2 {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    color: black;
+    height: 50px;
+    width: 220px;
+    padding: 0 20px;
+    font-family: "Inter";
+    font-weight: 700;
+    border-radius: 40px;
+    border: solid 1px rgb(128, 128, 128);
+    background-color: white;
+    cursor: pointer;
+    margin-top: 30px;
+}
+
+.start-btn2:hover {
+    background-color: transparent;
+    backdrop-filter: blur(40px);
+    color: white;
+}
+
+/*----- Partie présentation -----*/
+
+.presentation {
+    display: block;
+    padding-top: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 150px;
+    background-color: white;
+    height: 500px;
+    border-radius: 20px;
+    max-width: 1850px;
+}
+
+.present {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    height: 45px;
+    width: 140px;
+    color: rgb(96, 0, 126);
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+    border-radius: 50px;
+    border: solid 1px rgb(96, 0, 126);
+}
+
+.presentation-title {
+    font-family: "Inter";
+    font-weight: 300;
+    text-align: center;
+    font-size: 40px;
+    margin-top: 40px;
+}
+
+
+
+
+
+
+/*----- footer -----*/
 footer {
-    position: fixed;
+    position: static;
     bottom: 0;
     left: 0;
     width: 100%;
