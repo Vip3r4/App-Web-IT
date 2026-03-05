@@ -1,14 +1,14 @@
 // Entrées
-int potentio = **;
+int potentioM = *PIN*;
 
 // Sorties
-int moteur = **;
+int moteur = *PIN*;
 
 void setup() {
 
   pinMode(moteur, OUTPUT);
 
-  pinMode(potentio, INPUT);
+  pinMode(potentioM, INPUT);
 
   // Console en Série pour TEST
   Serial.begin(9600);
@@ -16,19 +16,19 @@ void setup() {
 }
 
 void loop() {
-  int EtatMoteur = DigitalRead(potentio);
-  int potentioPIN = analogRead(potentio);
+  int EtatMoteur = DigitalRead(potentioM);
+  int potentioPINM = analogRead(potentioM);
 
-  if (potPin >= 400 && potPin <= 600) {
+  if (potPinM >= 400 && potPinM <= 600) {
 
-    digitalWrite(potentioPIN, HIGH);
+    digitalWrite(potentioPINM, HIGH);
     delay(250);
   }
 
      // Affichage du statut (pour TEST)
-      if (potentioPIN >=0 ) {
+      if (potentioPINM >=0 ) {
         Serial.print("Potentio: ");
-        Serial.println(potentioPIN);
+        Serial.println(potentioPINM);
       }
     }
   }
