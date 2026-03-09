@@ -27,8 +27,7 @@ void setup() {
 
   // Console en Série pour TEST
   Serial.begin(9600);
-  Serial.println("Systeme Chauffage demarré. Simulation en cours.");
-  Serial.println("Systeme Moteur demarré. Simulation en cours.");
+  Serial.println("Marche");
 }
 
 void loop() {
