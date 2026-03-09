@@ -1,3 +1,14 @@
+
+//////////////////////////////////////////////////////////
+//  TESTChauffage.ino                                   //
+//  PROGRAMME DE TEST, UTILISER POUR TEST UNIQUEMENT    //
+//  NE PAS UTILISER POUR PRESENTATION                   //
+//  Prog: Chauffage                                     //
+//////////////////////////////////////////////////////////
+
+
+
+
 // Entrées
 int potentioC = *PIN*;
 

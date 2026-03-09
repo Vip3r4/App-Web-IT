@@ -1,3 +1,14 @@
+
+//////////////////////////////////////////////////////////
+//  TESTMoteur.ino                                      //
+//  PROGRAMME DE TEST, UTILISER POUR TEST UNIQUEMENT    //
+//  NE PAS UTILISER POUR PRESENTATION                   //
+//  Prog: Moteur                                        //
+//////////////////////////////////////////////////////////
+
+
+
+
 // Entrées
 int potentioM = *PIN*;
 
