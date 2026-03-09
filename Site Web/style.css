@@ -51,6 +51,7 @@ main h1{
     font-family: "Inter";
     font-weight: 400;
     margin-top: 40px;
+    animation: fadeInUp 1s ease forwards;
 }
 
 .who {
@@ -59,6 +60,7 @@ main h1{
     text-align: center;
     font-family: "Inter";
     margin-top: 20px;
+    animation: fadeInUp 1.2s ease forwards;
 }
 
 .objectif {
@@ -75,6 +77,7 @@ main h1{
     font-weight: 700;
     border-radius: 50px;
     border: solid 1px rgb(128, 128, 128);
+    animation: fadeInUp 0.8s ease forwards;
 }
 
 header a {
@@ -168,6 +171,7 @@ a {
     background-color: white;
     cursor: pointer;
     margin-top: 30px;
+    animation: fadeInUp 1.6s ease forwards;
 }
 
 .start-btn2:hover {
@@ -184,10 +188,12 @@ a {
     margin-left: auto;
     margin-right: auto;
     margin-top: 150px;
-    background-color: white;
-    height: 500px;
+    background-color: transparent;
+    backdrop-filter: blur(100px);
     border-radius: 20px;
     max-width: 1850px;
+    border: 2px solid white;
+    animation: fadeInUp 1.6s ease forwards;
 }
 
 .present {
@@ -196,25 +202,136 @@ a {
     margin-right: auto;
     height: 45px;
     width: 140px;
-    color: rgb(96, 0, 126);
+    color: white;
+    background-color: transparent;
     font-family: "Montserrat", sans-serif;
     font-weight: 700;
     border-radius: 50px;
-    border: solid 1px rgb(96, 0, 126);
+    border: solid 1px white;
 }
+
+ .present a {
+    color: white;
+ }
+
+ .present a:hover {
+    text-decoration: underline;
+ }
 
 .presentation-title {
     font-family: "Inter";
     font-weight: 300;
     text-align: center;
-    font-size: 40px;
-    margin-top: 40px;
+    font-size: 50px;
+    margin-top: 60px;
+    color: white;
+    animation: fadeInUp 1s ease forwards;
 }
 
+#cards {
+    display: flex;
+    justify-content: center;
+    gap: 80px;
+    margin-top: 50px;
+    margin-bottom: 80px;
+    animation: fadeInUp 2s ease forwards;
+}
 
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
 
+/* -- */
 
+.data {
+    display: block;
+    margin-top: 80px;
+    background-color: rgb(19, 3, 46);
+    border: 1px solid white;
+    border-radius: 20px;
+    width: 600px;
+    height: 400px;
+    color: white;
+    text-align: center;
+    box-shadow: rgba(167, 139, 250, 0.45) 20px 20px 20px;
+}
 
+.data h2 {
+    font-size: 24px;
+    font-family: "Inter";
+    font-weight: 600;
+    margin-top: 50px;
+}
+
+.data p {
+    font-size: 14px;
+    font-family: "Inter";
+    font-weight: 100;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.data i {
+    margin-left: 30px;
+    margin-top: 70px;
+}
+
+.data a {
+    color:white;
+}
+
+.data a:hover {
+    text-decoration: underline;
+}
+
+/* -- */
+
+.use {
+    display: block;
+    margin-top: 80px;
+    background-color: rgb(19, 3, 46);
+    border: 1px solid white;
+    border-radius: 20px;
+    width: 600px;
+    height: 400px;
+    color: white;
+    text-align: center;
+    box-shadow: rgba(167, 139, 250, 0.45) 20px 20px 20px;
+}
+
+.use h2 {
+    font-size: 24px;
+    font-family: "Inter";
+    font-weight: 600;
+    margin-top: 50px;
+}
+
+.use p {
+    font-size: 14px;
+    font-family: "Inter";
+    font-weight: 100;
+    padding-left: 30px;
+    padding-right: 30px;
+}
+
+.use i {
+    margin-top: 70px;
+}
+
+.use a {
+    color:white;
+}
+
+.use a:hover {
+    text-decoration: underline;
+}
 
 /*----- footer -----*/
 footer {
