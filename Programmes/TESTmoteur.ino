@@ -21,9 +21,7 @@ void setup() {
 
   pinMode(potentioM, INPUT);
 
-  // Console en Série pour TEST
   Serial.begin(9600);
-  Serial.println("Systeme Moteur demarré. Simulation en cours.");
 }
 
 void loop() {
@@ -36,7 +34,6 @@ void loop() {
     delay(250);
   }
 
-     // Affichage du statut (pour TEST)
       if (potentioPINM >=0 ) {
         Serial.print("Potentio: ");
         Serial.println(potentioPINM);
