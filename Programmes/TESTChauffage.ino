@@ -38,6 +38,5 @@ void loop() {
         Serial.print("Potentio: ");
         Serial.println(potentioPINC);
       }
-    }
   }
 }
