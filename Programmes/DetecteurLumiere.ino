@@ -1,6 +1,8 @@
 const int button = 8;
 const int ledG = 11;
 const int ledR = 13;
+const int buzzer = 6;
+const int capteurLum = 3;
 
 int ancienEtat = 1;
 int etatBouton;
@@ -13,7 +15,8 @@ void setup() {
   pinMode(button, INPUT_PULLUP);
   pinMode(ledG, OUTPUT);
   pinMode(ledR, OUTPUT);
-
+  pinMode(buzzer, OUTPUT);
+  pinMode(capteurLum, INPUT);
 }
 
 void loop() {
@@ -33,4 +36,23 @@ void loop() {
   }
 
   ancienEtat = etatBouton;
+
+  IsTurnedOn();
+}
+
+void IsTurnedOn() {
+
+  int capteurValue = analogRead(capteurLum);
+
+  if (mode) {
+    if (capteurValue > 600) {
+      digitalWrite(buzzer, HIGH);
+    } else {
+      digitalWrite(buzzer, LOW);
+      return;
+    }
+  } else {
+    return;
+  }
+  loop();
 }
