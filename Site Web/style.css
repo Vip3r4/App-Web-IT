@@ -253,7 +253,7 @@ a {
 .data {
     display: block;
     margin-top: 80px;
-    background-color: rgb(19, 3, 46);
+    background-color: rgb(20, 4, 49);
     border: 1px solid white;
     border-radius: 20px;
     width: 600px;
@@ -261,6 +261,7 @@ a {
     color: white;
     text-align: center;
     box-shadow: rgba(167, 139, 250, 0.45) 20px 20px 20px;
+    transition: transform 0.3s ease;
 }
 
 .data h2 {
@@ -291,12 +292,16 @@ a {
     text-decoration: underline;
 }
 
+.data:hover {
+    transform: scale(1.01);
+}
+
 /* -- */
 
 .use {
     display: block;
     margin-top: 80px;
-    background-color: rgb(19, 3, 46);
+    background-color: rgb(20, 4, 49);
     border: 1px solid white;
     border-radius: 20px;
     width: 600px;
@@ -304,6 +309,7 @@ a {
     color: white;
     text-align: center;
     box-shadow: rgba(167, 139, 250, 0.45) 20px 20px 20px;
+    transition: transform 0.3s ease;
 }
 
 .use h2 {
@@ -331,6 +337,10 @@ a {
 
 .use a:hover {
     text-decoration: underline;
+}
+
+.use:hover {
+    transform: scale(1.01);
 }
 
 /*----- footer -----*/
