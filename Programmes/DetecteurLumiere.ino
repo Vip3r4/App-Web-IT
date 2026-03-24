@@ -1,6 +1,5 @@
 const int button = 8;
-const int ledG = 11;
-const int ledR = 13;
+const int relais = 3;
 const int buzzer = 6;
 const int capteurLum = 3;
 
@@ -13,8 +12,7 @@ void setup() {
 
   Serial.begin(9600);
   pinMode(button, INPUT_PULLUP);
-  pinMode(ledG, OUTPUT);
-  pinMode(ledR, OUTPUT);
+  pinMode(relais, OUTPUT);
   pinMode(buzzer, OUTPUT);
   pinMode(capteurLum, INPUT);
 }
@@ -24,15 +22,12 @@ void loop() {
 
   if (ancienEtat == 1 && etatBouton == 0) {
     mode = !mode;
-    delay(50);
   }
 
   if (mode) {
-    digitalWrite(ledG, HIGH);
-    digitalWrite(ledR, LOW);
+    digitalWrite(relais, HIGH);
   } else {
-    digitalWrite(ledG, LOW);
-    digitalWrite(ledR, HIGH);
+    digitalWrite(relais , LOW);
   }
 
   ancienEtat = etatBouton;
