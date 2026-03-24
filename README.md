@@ -4,9 +4,11 @@
 
  - Afin d'assurer la ventilation de la serre, prévoir un couvercle motorisé qui permettra le renouvellement de l'air. Le choix de l’angle d’ouverture (entre 5° et 15°) se fera par un potentiomètre que l’utilisateur pourra régler suivant les besoins et les types de plantes.
 
- - La serre sera équipée d'un système de chauffage (à déterminer), avec une régulation de température. L’objectif étant de maîtriser les conditions « climatiques » dans lesquels votre plantation devra évoluer. La température intérieure sera comprise entre 14°C et 28°C, réglable par potentiomètre. Pour le choix de la résistance chauffante on prendra pour la température extérieure 8°. 
+ - La serre sera équipée d'un système de chauffage (à déterminer), avec une régulation de température. L’objectif étant de maîtriser les conditions « climatiques » dans lesquels votre plantation devra évoluer. La température intérieure sera comprise entre 14°C et 28°C, réglable par potentiomètre. Pour le choix de la résistance chauffante on prendra pour la température extérieure 8° (La somme des résistances devra être égale à 35 Watts). 
 
  - La serre sera aussi équipée d'un éclairage. L’éclairage fonctionnera 16h/jour. Nous ajouterons ici une alarme sonore en cas de panne de l'éclairage. En effet, une absence de lumière trop longue serait fatale aux plantes.
+
+ - 
 
 ### La Serre Connectée aura donc :
  - Une carte **Arduino Uno** branchée via USB au PC.
