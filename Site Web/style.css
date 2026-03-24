@@ -293,7 +293,7 @@ a {
 }
 
 .data:hover {
-    transform: scale(1.01);
+    transform: scale(1.04);
 }
 
 /* -- */
@@ -340,7 +340,7 @@ a {
 }
 
 .use:hover {
-    transform: scale(1.01);
+    transform: scale(1.04);
 }
 
 /*----- footer -----*/
