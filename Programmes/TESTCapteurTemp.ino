@@ -19,8 +19,8 @@ void loop() {
   uint16_t tmp; // valeur codée en 16bits
     double data; // valeur codée en 32bits
     tmp=analogRead(CapteurTmp);
-    data = (double) tmp * (5/10.24);
-    Serial.print("Tep:"); //Display the temperature on Serial monitor
+    data = ((double) tmp * (5/10.24))+2;
+    Serial.print("Temp:");
     Serial.print(data);
     Serial.println("C");
 }
