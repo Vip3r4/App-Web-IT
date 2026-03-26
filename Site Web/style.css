@@ -232,8 +232,7 @@ a {
     display: flex;
     justify-content: center;
     gap: 80px;
-    margin-top: 50px;
-    margin-bottom: 80px;
+    margin-bottom: 40px;
     animation: fadeInUp 2s ease forwards;
 }
 
@@ -343,7 +342,17 @@ a {
     transform: scale(1.04);
 }
 
-/*----- footer -----*/
+/* ------------------------------ */
+
+#clock-icon {
+    margin-left: 10px;
+}
+
+#dev-icon {
+    margin-left: 10px;
+}
+
+/*-------------------------------*/
 footer {
     position: static;
     bottom: 0;
