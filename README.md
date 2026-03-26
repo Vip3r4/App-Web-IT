@@ -8,7 +8,6 @@
 
  - La serre sera aussi équipée d'un éclairage. L’éclairage fonctionnera 16h/jour. Nous ajouterons ici une alarme sonore en cas de panne de l'éclairage. En effet, une absence de lumière trop longue serait fatale aux plantes.
 
- - 
 
 ### La Serre Connectée aura donc :
  - Une carte **Arduino Uno** branchée via USB au PC.
