@@ -21,3 +21,8 @@
 ### La Serre Connectée pourra donc :
  - Permettre d'avoir un accès direct et local aux informations comme la température de la Serre, l'état de l'éclairage
  - Avoir aussi un accès aux informations de la Serre via un site Web et une API
+
+
+### Présentation de l'API :
+
+L’API de SmartGH relie la carte arduino au site SmartGH. En lançant le fichier config.bat (il faut aussi le fichier main.py dans le même dossier), l’application serveur se lance toute seule et permet une lecture des données sur le site.
