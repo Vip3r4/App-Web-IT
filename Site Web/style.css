@@ -105,7 +105,7 @@ header a {
 
 nav {
     position: absolute;
-    left: 50%;
+    left: 49%;
     transform: translateX(-50%);
 }
 

@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmarGH - About</title>
-    <link rel="stylesheet" href="style.css">
+    <title>SmartGH - About</title>
+    <link rel="stylesheet" href="style-pannel.css">
 </head>
 <body>
     <header>
@@ -21,11 +21,43 @@
             </ul>
         </nav>
     </header>
-    <main>
+    <div class="container">
+            <aside class="sidebar">
+                <div class="logo-sidebar">
+                    <img src="logo.png">
+                </div>
 
-    </main>
+                <navi class="menu">
+                    
+                </navi>
+
+                <div class="version-box">
+                     <div class="divider"></div>
+                    <div class="version">v1.0</div>
+                </div>
+            </aside>
+
+            <main class="content">
+                <p>température : <span id="Temp">--</span></p>
+            </main>
+        </div>
     <footer>
         <p>© 2026 SmartGH. Tous droits réservés.</p>
     </footer>
+    <script>
+        async function updateTemp() {
+            try {
+                const res = await fetch("http://localhost:8000/api/serre");
+                const data = await res.json();
+                document.getElementById("Temp").textContent = `${data.temperature}`;
+            } catch (err) {
+                console.error("Impossible de récupérer la température", err);
+                document.getElementById("Temp").textContent = "--";
+            }
+        }
+        
+        setInterval(updateTemp, 5000);
+        updateTemp();
+    </script>
 </body>
 </html>

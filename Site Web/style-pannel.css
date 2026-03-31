@@ -1,0 +1,199 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background:
+    
+    radial-gradient(
+    ellipse at bottom center,
+        rgba(167, 139, 250, 0.45) 0%,
+        rgba(167, 139, 250, 0.25) 25%,
+        rgba(0, 0, 0, 0) 60%
+    ),
+
+    radial-gradient(
+        ellipse at center,
+        rgba(139, 92, 246, 0.50) 0%,
+        rgba(124, 58, 237, 0.30) 25%,
+        rgba(0, 0, 0, 0.92) 70%
+    ),
+
+    
+    #040a08;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+header {
+    position: relative;
+    background-color: transparent;
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    font-family: "Montserrat", sans-serif;
+}
+
+.logo {
+    max-height: 100px;
+}
+
+header h2 {
+    color: white;
+    font-size: 24px;
+    margin-left: 10px;
+}
+
+header a {
+    margin-left: auto;
+}
+
+nav {
+    position: absolute;
+    left: 49%;
+    transform: translateX(-50%);
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 25px;
+}
+
+nav a {
+    text-decoration: none;
+    color: #ccc;
+    font-size: 18px;
+    transition: 0.3s;
+    font-family: "Montserrat", sans-serif;
+    font-weight: 700;
+    position: relative;
+}
+
+nav a.active {
+    color: #fff;
+    font-weight: 600;
+    position: relative;
+}
+
+nav a::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 100%;
+  height: 2px;
+  background-color: rgb(255, 255, 255);
+  transform: translateX(-50%) scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s ease;
+}
+
+nav a:hover::after {
+  transform: translateX(-50%) scaleX(1);
+}
+
+nav a:hover {
+    color: rgb(255, 255, 255);
+}
+
+a {
+    text-decoration: none;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/*-------------------------------*/
+
+.container {
+    display: flex;
+    min-height: 700px;
+    margin: 150px auto 50px;
+    max-width: 1850px;
+
+    background-color: #0b0b0f;
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.123);
+
+    overflow: hidden;
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+.sidebar {
+  width: 80px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+
+  padding: 20px 10px;
+
+  background: rgba(255,255,255,0.02);
+  border-right: 1px solid rgba(255,255,255,0.05);
+}
+
+.logo-sidebar img {
+    max-height: 70px;
+}
+
+.content {
+  flex: 1;
+  padding: 20px;
+  color: white;
+}
+
+.menu {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  color: white;
+}
+
+.version {
+  font-size: 15px;
+  opacity: 0.6;
+  color: white;
+  margin-top: 5px;
+}
+
+.version-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.divider {
+  width: 50px;
+  height: 1px;
+  background: rgba(255,255,255,0.2);
+}
+
+/*-------------------------------*/
+
+footer {
+    position: static;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+    background-color: transparent;
+    backdrop-filter: blur(40px);
+}
+  
+footer p {
+  margin: 0;
+  font-size: 14px;
+  font-family: 'Share Tech Mono', monospace;
+}

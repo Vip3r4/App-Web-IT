@@ -89,6 +89,11 @@ void loop() {
     digitalWrite(relais , LOW);
   }
 
+  if (Temps = 86400000)
+  {
+    Temps = 0;
+  }
+
   ancienEtat = etatBouton;
 
   IsTurnedOn();
