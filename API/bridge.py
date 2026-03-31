@@ -35,7 +35,7 @@ while True:
                         "angle_ouverture": int(parts[1]),
                         "eclairage_actif": bool(int(parts[2])),
                         "alarme_panne": bool(int(parts[3])),
-                        "couleur_led": parts[4]
+                        "etatled": False
                     }
                     
 
