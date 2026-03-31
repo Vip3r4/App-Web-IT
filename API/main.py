@@ -1,34 +1,38 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
-from typing import Optional
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
-# Modèle de données pour un souhait
-class Souhait(BaseModel):
-    id: int
-    objet: str
-    prix_estime: float
-    urgent: bool = False
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
-# Notre "base de données" temporaire (une liste)
-mes_souhaits = [
-    {"id": 1, "objet": "Vélo", "prix_estime": 200.0, "urgent": False},
-    {"id": 2, "objet": "Livre de code", "prix_estime": 25.0, "urgent": True}
-]
+class EtatSerre(BaseModel):
+    temperature: float
+    angle_ouverture: int
+    eclairage_actif: bool
+    alarme_panne: bool
+    etatled: bool
 
-# ROUTE 1 : Message de bienvenue
-@app.get("/")
-def home():
-    return {"message": "Bienvenue sur mon API de souhaits !"}
+donnees_actuelles = {
+    "temperature": 0.0,
+    "angle_ouverture": 0,
+    "eclairage_actif": False,
+    "alarme_panne": False,
+    "etatled": False
+}
 
-# ROUTE 2 : Récupérer tous les souhaits (GET)
-@app.get("/souhaits")
-def get_souhaits():
-    return mes_souhaits
+@app.get("/api/serre")
+def obtenir_etat():
+    return donnees_actuelles
 
-# ROUTE 3 : Ajouter un nouveau souhait (POST)
-@app.post("/souhaits")
-def ajouter_souhait(nouveau_souhait: Souhait):
-    mes_souhaits.append(nouveau_souhait.dict())
-    return {"message": "Souhait ajouté avec succès !", "donnees": nouveau_souhait}
+@app.post("/api/serre/update")
+def mettre_a_jour(nouvel_etat: EtatSerre):
+    global donnees_actuelles
+    donnees_actuelles = nouvel_etat.dict()
+    return {"status": "success"}

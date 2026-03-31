@@ -8,7 +8,6 @@
 
  - La serre sera aussi équipée d'un éclairage. L’éclairage fonctionnera 16h/jour. Nous ajouterons ici une alarme sonore en cas de panne de l'éclairage. En effet, une absence de lumière trop longue serait fatale aux plantes.
 
- - 
 
 ### La Serre Connectée aura donc :
  - Une carte **Arduino Uno** branchée via USB au PC.
@@ -22,3 +21,8 @@
 ### La Serre Connectée pourra donc :
  - Permettre d'avoir un accès direct et local aux informations comme la température de la Serre, l'état de l'éclairage
  - Avoir aussi un accès aux informations de la Serre via un site Web et une API
+
+
+### Présentation de l'API :
+
+L’API de SmartGH relie la carte arduino au site SmartGH. En lançant le fichier config.bat (il faut aussi le fichier main.py dans le même dossier), l’application serveur se lance toute seule et permet une lecture des données sur le site.
