@@ -21,5 +21,6 @@ echo.
 echo [3/3] Lancement du Pont Arduino...
 :: On lance le script de lecture serie dans la fenetre actuelle
 python bridge.py
+python main.py
 
 pause
