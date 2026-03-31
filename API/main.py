@@ -27,3 +27,7 @@ def mettre_a_jour(nouvel_etat: EtatSerre):
     global donnees_actuelles
     donnees_actuelles = nouvel_etat.dict()
     return {"status": "success"}
+
+app.use(cors({
+    origin: "http://localhost:3000"
+}));
