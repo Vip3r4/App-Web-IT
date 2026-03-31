@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
+from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
@@ -28,6 +29,10 @@ def mettre_a_jour(nouvel_etat: EtatSerre):
     donnees_actuelles = nouvel_etat.dict()
     return {"status": "success"}
 
-app.use(cors({
-    origin: "http://localhost:3000"
-}));
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
