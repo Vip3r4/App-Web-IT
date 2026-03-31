@@ -178,6 +178,13 @@ a {
   background: rgba(255,255,255,0.2);
 }
 
+.leave {
+    margin-top: 450px;
+}
+.leave a {
+    color: white;
+}
+
 /*-------------------------------*/
 
 footer {
