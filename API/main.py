@@ -4,6 +4,14 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 class EtatSerre(BaseModel):
     temperature: float
     angle_ouverture: int
@@ -28,11 +36,3 @@ def mettre_a_jour(nouvel_etat: EtatSerre):
     global donnees_actuelles
     donnees_actuelles = nouvel_etat.dict()
     return {"status": "success"}
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
