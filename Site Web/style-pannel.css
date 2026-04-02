@@ -112,6 +112,33 @@ a {
   }
 }
 
+.objectif {
+    display: block;
+    margin-top: 40px;
+    margin-left: auto;
+    margin-right: auto;
+    height: 50px;
+    width: 250px;
+    background-color: transparent;
+    backdrop-filter: blur(60px);
+    color: white;
+    font-family: "Inter";
+    font-weight: 700;
+    border-radius: 50px;
+    border: solid 1px rgb(128, 128, 128);
+    animation: fadeInUp 0.8s ease forwards;
+}
+
+h1{
+    color: white;
+    font-size: 50px;
+    text-align: center;
+    font-family: "Inter";
+    font-weight: 400;
+    margin-top: 40px;
+    animation: fadeInUp 1s ease forwards;
+}
+
 /*-------------------------------*/
 
 .container {
