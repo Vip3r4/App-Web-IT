@@ -17,14 +17,12 @@ class EtatSerre(BaseModel):
     angle_ouverture: int
     eclairage_actif: bool
     alarme_panne: bool
-    etatled: bool
 
 donnees_actuelles = {
     "temperature": 0.0,
     "angle_ouverture": 0,
     "eclairage_actif": False,
     "alarme_panne": False,
-    "etatled": False
 }
 
 @app.get("/api/serre")
