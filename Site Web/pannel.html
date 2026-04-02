@@ -44,25 +44,14 @@
 
             <main class="content">
                 <p>température : <span id="Temp">--</span></p>
+                <p>angle d'ouverture : <span id="Angle">--</span></p>
+                <p>etat led : <span id="EtatLed">--</span></p>
+                <p>etat alarme : <span id="EtatAlarm">--</span></p>
             </main>
         </div>
     <footer>
         <p>© 2026 SmartGH. Tous droits réservés.</p>
     </footer>
-    <script>
-        async function updateTemp() {
-            try {
-                const res = await fetch("http://localhost:8000/api/serre");
-                const data = await res.json();
-                document.getElementById("Temp").textContent = `${data.temperature}`;
-            } catch (err) {
-                console.error("Impossible de récupérer la température", err);
-                document.getElementById("Temp").textContent = "--";
-            }
-        }
-        
-        setInterval(updateTemp, 5000);
-        updateTemp();
-    </script>
+    <script src="API-fetch.js"></script>
 </body>
 </html>
