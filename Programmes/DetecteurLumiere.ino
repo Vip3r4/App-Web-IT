@@ -3,6 +3,7 @@ const int relais = 3;
 const int buzzer = 6;
 const int capteurLum = 3;
 unsigned long Temps;
+unsigned long startTime = 0;
 
 int ancienEtat = 1;
 int etatBouton;
@@ -16,28 +17,30 @@ void setup() {
   pinMode(relais, OUTPUT);
   pinMode(buzzer, OUTPUT);
   pinMode(capteurLum, INPUT);
+
+  startTime = millis();
 }
 
 void loop() {
   etatBouton = digitalRead(button);
+  Temps = millis() - startTime;
 
   Serial.print("Time: ");
-  Temps = millis();
   Serial.println(Temps/1000);
 
   if (ancienEtat == 1 && etatBouton == 0) {
     mode = !mode;
   }
 
-  if (mode || (Temps < 57600000)) {
+  if (mode || (Temps < /*57600000*/ 16000)) {
     digitalWrite(relais, HIGH);
-  } else if ((Temps > 57600000) || !mode) {
+  } else if ((Temps > /*57600000*/ 8000) || !mode) {
     digitalWrite(relais , LOW);
   }
 
-  if (Temps = 86400000)
+  if (Temps >= /*86400000*/ 24000)
   {
-    Temps = 0;
+    startTime = millis();
   }
 
   ancienEtat = etatBouton;
