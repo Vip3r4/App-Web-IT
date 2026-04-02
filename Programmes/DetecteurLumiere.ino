@@ -26,7 +26,7 @@ void loop() {
   Temps = millis() - startTime;
 
   Serial.print("Time: ");
-  Serial.println(Temps/1000);
+  Serial.println(Temps / 1000);
 
   if (ancienEtat == 1 && etatBouton == 0) {
     mode = !mode;
@@ -35,32 +35,27 @@ void loop() {
   if (mode || (Temps < /*57600000*/ 16000)) {
     digitalWrite(relais, HIGH);
   } else if ((Temps > /*57600000*/ 8000) || !mode) {
-    digitalWrite(relais , LOW);
+    digitalWrite(relais, LOW);
   }
 
-  if (Temps >= /*86400000*/ 24000)
-  {
+  if (Temps >= /*86400000*/ 24000) {
     startTime = millis();
   }
 
   ancienEtat = etatBouton;
-
-  IsTurnedOn();
+  isTurnedOn();
 }
 
-void IsTurnedOn() {
-
+void isTurnedOn() {
   int capteurValue = analogRead(capteurLum);
 
-  if (mode) {
+  if (mode || Temps < 16000) {
     if (capteurValue > 600) {
       digitalWrite(buzzer, HIGH);
     } else {
       digitalWrite(buzzer, LOW);
       return;
     }
-  } else {
-    return;
   }
-  loop();
+
 }
