@@ -32,13 +32,13 @@ void loop() {
     mode = !mode;
   }
 
-  if (mode || (Temps < /*57600000*/ 16000)) {
+  if (mode || (Temps < 16000)) {
     digitalWrite(relais, HIGH);
-  } else if ((Temps > /*57600000*/ 8000) || !mode) {
+  } else if ((Temps > 8000) || !mode) {
     digitalWrite(relais, LOW);
   }
 
-  if (Temps >= /*86400000*/ 24000) {
+  if (Temps >= 24000) {
     startTime = millis();
   }
 
