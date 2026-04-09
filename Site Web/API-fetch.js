@@ -53,3 +53,14 @@ async function isAlarmActive() {
 
         setInterval(isAlarmActive, 500);
         isAlarmActive();
+
+export async function getTemperature() {
+    try {
+        const res = await fetch("http://localhost:8000/api/serre");
+        const data = await res.json();
+        return data.temperature;
+    } catch (err) {
+        console.error("Impossible de récupérer la température pour le graphique", err);
+        return null;
+    }
+}

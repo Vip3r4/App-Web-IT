@@ -1,15 +1,15 @@
-import { getTemperature } from '/workspaces/App-Web-IT/Site Web/API-fetch';
+import { getTemperature } from './API-fetch.js';
 
-const tempDisplay = document.getElementById("Temp");
 const ctx = document.getElementById('tempChart').getContext('2d');
 
-let chartData = {
+const chartData = {
     labels: [],
     datasets: [{
         label: 'Température (°C)',
         data: [],
-        borderColor: 'red',
-        fill: false,
+        borderColor: 'white',
+        backgroundColor: 'rgba(29, 10, 29, 0.97)',
+        fill: true,
         tension: 0.3
     }]
 };
@@ -19,9 +19,16 @@ const tempChart = new Chart(ctx, {
     data: chartData,
     options: {
         responsive: true,
+        animation: false,
         scales: {
-            x: { title: { display: true, text: 'Heure' } },
-            y: { title: { display: true, text: 'Température (°C)' }, min: 10, max: 30 }
+            x: {
+                title: { display: true, text: 'Heure' }
+            },
+            y: {
+                title: { display: true, text: 'Température (°C)' },
+                min: 10,
+                max: 30
+            }
         }
     }
 });
@@ -30,9 +37,8 @@ async function updateChart() {
     const temp = await getTemperature();
     if (temp === null) return;
 
-    tempDisplay.textContent = temp;
-
     const now = new Date().toLocaleTimeString();
+
     chartData.labels.push(now);
     chartData.datasets[0].data.push(temp);
 
@@ -42,7 +48,10 @@ async function updateChart() {
     }
 
     tempChart.update();
+
+    const tempDisplay = document.getElementById("Temp");
+    if (tempDisplay) tempDisplay.textContent = `${temp}°C`;
 }
 
-setInterval(updateChart, 500);
+setInterval(updateChart, 800);
 updateChart();
