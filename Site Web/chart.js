@@ -26,8 +26,8 @@ const tempChart = new Chart(ctx, {
             },
             y: {
                 title: { display: true, text: 'Température (°C)' },
-                min: 10,
-                max: 30
+                min: 14,
+                max: 28
             }
         }
     }

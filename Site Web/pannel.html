@@ -49,11 +49,19 @@
             </aside>
 
             <main class="content">
-                <p>température : <input id="tempChanger" type="range" min="14" max="28"><span id="Temp">--</span></p>
-                <canvas id="tempChart" width="400" height="200"></canvas>
-                <p>angle d'ouverture : <input id="angleChanger" type="range" min="5" max="15"><span id="Angle">--</span></p>
-                <p>etat led : <span id="EtatLed">--</span></p>
-                <p>etat alarme : <span id="EtatAlarm">--</span></p>
+                <div class="temp">
+                    <p>température : <input id="tempChanger" type="range" min="14" max="28"><span id="Temp">--</span></p>
+                    <canvas id="tempChart" width="400" height="200"></canvas>
+                </div>
+                <div class="angle">
+                    <p>angle d'ouverture : <input id="angleChanger" type="range" min="5" max="15"><span id="Angle">--</span></p>
+                </div>
+                <div class="led">
+                    <p>etat led : <span id="EtatLed">--</span></p>
+                </div>
+                <div class="alarm">
+                    <p>etat alarme : <span id="EtatAlarm">--</span></p>
+                </div>
             </main>
         </div>
     <footer>
