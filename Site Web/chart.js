@@ -8,7 +8,7 @@ const chartData = {
         label: 'Température (°C)',
         data: [],
         borderColor: 'white',
-        backgroundColor: 'rgba(29, 10, 29, 0.97)',
+        backgroundColor: 'rgba(167, 139, 250, 0.14)',
         fill: true,
         tension: 0.3
     }]
@@ -19,6 +19,7 @@ const tempChart = new Chart(ctx, {
     data: chartData,
     options: {
         responsive: true,
+        maintainAspectRatio: false,
         animation: false,
         scales: {
             x: {
