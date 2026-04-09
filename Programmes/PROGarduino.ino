@@ -1,13 +1,13 @@
 
 const int pinPotOuv = A0;   // Potentiomètre Ouverture
-const int pinPotChauf = A1; // Potentiomètre Chauffage (Consigne)
+const int pinPotChauf = A1; // Potentiomètre Chauffage
 const int pinTemp = A2;     // Capteur Température (Ex: LM35 ou TMP36)
 const int pinLDR = A3;      // Capteur Lumière (pour vérifier l'éclairage)
 
 const int pinBuzzer = 9;    // Alarme sonore
-const int pinLedR = 10;     // LED Rouge
-const int pinLedJ = 11;     // LED Jaune
-const int pinLedV = 12;     // LED Verte
+const int pin = 9;    // Alarme sonore
+const int pin = 9;    // Alarme sonore
+const int pin = 9;    // Alarme sonore
 
 void setup() {
   Serial.begin(9600);
