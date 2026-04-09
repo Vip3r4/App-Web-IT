@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>SmartGH - About</title>
     <link rel="stylesheet" href="style-pannel.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script type="module" src="API-fetch.js"></script>
+    <script type="module" src="API-post.js"></script>
+    <script type="module" src="chart.js"></script>
     <script src="https://kit.fontawesome.com/6ce492d5d4.js" crossorigin="anonymous"></script>
 </head>
 <body>
@@ -45,8 +49,9 @@
             </aside>
 
             <main class="content">
-                <p>température : <span id="Temp">--</span></p>
-                <p>angle d'ouverture : <span id="Angle">--</span></p>
+                <p>température : <input id="tempChanger" type="range" min="14" max="28"><span id="Temp">--</span></p>
+                <canvas id="tempChart" width="400" height="200"></canvas>
+                <p>angle d'ouverture : <input id="angleChanger" type="range" min="5" max="15"><span id="Angle">--</span></p>
                 <p>etat led : <span id="EtatLed">--</span></p>
                 <p>etat alarme : <span id="EtatAlarm">--</span></p>
             </main>
@@ -55,5 +60,6 @@
         <p>© 2026 SmartGH. Tous droits réservés.</p>
     </footer>
     <script src="API-fetch.js"></script>
+    <script src="API-post.js"></script>
 </body>
 </html>

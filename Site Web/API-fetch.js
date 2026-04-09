@@ -9,7 +9,7 @@ async function Temperature() {
             }
         }
         
-        setInterval(Temperature, 5000);
+        setInterval(Temperature, 500);
         Temperature();
 
 async function AngleOpen() {
@@ -23,7 +23,7 @@ async function AngleOpen() {
             }
         }
 
-        setInterval(AngleOpen, 5000);
+        setInterval(AngleOpen, 500);
         AngleOpen();
 
 async function isLedActive() {
@@ -37,7 +37,7 @@ async function isLedActive() {
             }
         }
 
-        setInterval(isLedActive, 5000);
+        setInterval(isLedActive, 500);
         isLedActive();
 
 async function isAlarmActive() {
@@ -51,5 +51,5 @@ async function isAlarmActive() {
             }
         }
 
-        setInterval(isAlarmActive, 5000);
+        setInterval(isAlarmActive, 500);
         isAlarmActive();

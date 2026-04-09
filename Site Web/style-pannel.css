@@ -212,6 +212,10 @@ h1{
     color: white;
 }
 
+.leave:hover {
+  transform: scale(1.10);
+}
+
 /*-------------------------------*/
 
 footer {
