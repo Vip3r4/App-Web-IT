@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SmartGH - About</title>
+    <title>SmartGH - Pannel</title>
     <link rel="stylesheet" href="style-pannel.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="API-fetch.js"></script>
     <script type="module" src="API-post.js"></script>
     <script type="module" src="chart.js"></script>
     <script src="https://kit.fontawesome.com/6ce492d5d4.js" crossorigin="anonymous"></script>
+    <link rel="icon" href="logo.png">
 </head>
 <body>
     <header>
@@ -58,10 +59,10 @@
                 <div class="angle">
                     <p>angle d'ouverture : <input id="angleChanger" type="range" min="5" max="15"><span id="Angle">--</span></p>
                 </div>
-                <div class="led">
+                <div class="led" id="led">
                     <p>etat led : <span id="EtatLed">--</span></p>
                 </div>
-                <div class="alarm">
+                <div class="alarm" id="alarm">
                     <p>etat alarme : <span id="EtatAlarm">--</span></p>
                 </div>
             </main>
