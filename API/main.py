@@ -15,13 +15,14 @@ app.add_middleware(
 class EtatSerre(BaseModel):
     temperature: float
     angle_ouverture: int
-    eclairage_actif: bool
+    etatled: bool
     alarme_panne: bool
+
 
 donnees_actuelles = {
     "temperature": 0.0,
     "angle_ouverture": 0,
-    "eclairage_actif": False,
+    "etatled": False,
     "alarme_panne": False,
 }
 
@@ -34,3 +35,15 @@ def mettre_a_jour(nouvel_etat: EtatSerre):
     global donnees_actuelles
     donnees_actuelles = nouvel_etat.dict()
     return {"status": "success"}
+
+@app.post("/control")
+def control(data: EtatSerre):
+    current_state["etatled"] = data.etatled
+    current_state["angle"] = data.angle
+    current_state["temperature"] = data.temperature
+
+    print(current_state)
+
+    send_to_arduino(data)
+
+    return {"status": "ok"}
