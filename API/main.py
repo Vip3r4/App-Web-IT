@@ -4,6 +4,8 @@ from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
 
+ser = serial.Serial('COM3', 9600)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -12,12 +14,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+def send_to_arduino(data):
+    message = f"L{int(data.etatLed)};A{data.angle};T{data.temperature}\n"
+    ser.write(message.encode())
+
 class EtatSerre(BaseModel):
     temperature: float
     angle_ouverture: int
     etatled: bool
     alarme_panne: bool
-
 
 donnees_actuelles = {
     "temperature": 0.0,
