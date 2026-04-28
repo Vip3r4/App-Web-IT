@@ -11,7 +11,7 @@ python -m pip install fastapi uvicorn pyserial requests --trusted-host pypi.org 
 
 echo.
 echo [2/3] Lancement de l'API (Fenetre separée)...
-start "API Serre" cmd /k "python -m uvicorn main:app --reload"
+start "API Serre" cmd /k "python -m uvicorn main:app --reload --host 0.0.0.0 --port 8000"
 
 timeout /t 5
 
