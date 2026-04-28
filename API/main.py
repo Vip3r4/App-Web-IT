@@ -43,11 +43,11 @@ def mettre_a_jour(nouvel_etat: EtatSerre):
 
 @app.post("/control")
 def control(data: EtatSerre):
-    current_state["etatled"] = data.etatled
-    current_state["angle"] = data.angle
-    current_state["temperature"] = data.temperature
+    donnees_actuelles["etatled"] = data.etatled
+    donnees_actuelles["angle"] = data.angle
+    donnees_actuelles["temperature"] = data.temperature
 
-    print(current_state)
+    print(donnees_actuelles)
 
     send_to_arduino(data)
 
