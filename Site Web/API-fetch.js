@@ -54,6 +54,20 @@ async function isAlarmActive() {
         setInterval(isAlarmActive, 500);
         isAlarmActive();
 
+async function etatLED() {
+            try {
+                const res = await fetch("http://localhost:8000/api/serre");
+                const data = await res.json();
+                document.getElementById("EtatLed").textContent = `${data.etatled}`;
+            } catch (err) {
+                console.error("Impossible de récupérer l'État la led", err);
+                document.getElementById("EtatLed").textContent = "Unknown";
+            }
+        }
+
+        setInterval(etatLED, 500);
+        etatLED();
+
 export async function getTemperature() {
     try {
         const res = await fetch("http://localhost:8000/api/serre");

@@ -57,13 +57,17 @@
                     <canvas id="tempChart" width="400" height="200"></canvas>
                 </div>
                 <div class="angle">
-                    <p>angle d'ouverture : <input id="angleChanger" type="range" min="5" max="15"><span id="Angle">--</span></p>
+                    <p>Angle d'ouverture : <input id="angleChanger" type="range" min="5" max="15"><span id="Angle">--</span></p>
                 </div>
                 <div class="led" id="led">
-                    <p>etat led : <span id="EtatLed">--</span></p>
+                    <p>Etat led : <span id="EtatLed">--</span></p>
+                    <label class="switch">
+                        <input type="checkbox" id="etatledchanger">
+                        <div class="slider"></div>
+                    </label>
                 </div>
                 <div class="alarm" id="alarm">
-                    <p>etat alarme : <span id="EtatAlarm">--</span></p>
+                    <p>Etat alarme : <span id="EtatAlarm">--</span></p>
                 </div>
             </main>
         </div>
@@ -72,5 +76,44 @@
     </footer>
     <script src="API-fetch.js"></script>
     <script src="API-post.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+        var checkbox = document.querySelector('input[type="checkbox"]');
+
+        checkbox.addEventListener('change', async () => {
+            if (checkbox.checked) {
+                const inputValue = "true";
+                try {
+                    const res = await fetch("http://localhost:8000/api/serre");
+                    const currentState = await res.json();
+                    currentState.etatled = inputValue;
+                    await fetch("http://localhost:8000/api/serre/update", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(currentState)
+                    });
+                    console.log("Etat envoyé :", inputValue);
+                } catch (err) {
+                    console.error("Impossible de changer l'etat de la led'", err);
+                }
+            } else {
+                const inputValue2 = "false";
+                try {
+                    const res = await fetch("http://localhost:8000/api/serre");
+                    const currentState = await res.json();
+                    currentState.etatled = inputValue2;
+                    await fetch("http://localhost:8000/api/serre/update", {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(currentState)
+                    });
+                    console.log("Etat envoyé :", inputValue2);
+                } catch (err) {
+                    console.error("Impossible de changer l'etat de la led'", err);
+                }
+            }
+        });
+        });
+    </script>
 </body>
 </html>
