@@ -34,3 +34,15 @@ def mettre_a_jour(nouvel_etat: EtatSerre):
     global donnees_actuelles
     donnees_actuelles = nouvel_etat.dict()
     return {"status": "success"}
+
+@app.post("/control")
+def control(data: ControlData):
+    current_state["etatLed"] = data.etatLed
+    current_state["angle"] = data.angle
+    current_state["temperature"] = data.temperature
+
+    print(current_state)
+
+    send_to_arduino(data)
+
+    return {"status": "ok"}
