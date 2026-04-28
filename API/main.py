@@ -36,7 +36,7 @@ def mettre_a_jour(nouvel_etat: EtatSerre):
     return {"status": "success"}
 
 @app.post("/control")
-def control(data: ControlData):
+def control(data: EtatSerre):
     current_state["etatLed"] = data.etatLed
     current_state["angle"] = data.angle
     current_state["temperature"] = data.temperature
