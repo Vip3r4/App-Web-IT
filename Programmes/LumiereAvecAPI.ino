@@ -1,139 +1,106 @@
-#include <WiFiEspAT.h>
 #include <ArduinoJson.h>
 #include <SoftwareSerial.h>
 
-// --- Configuration WiFi ---
 char ssid[] = "A35 de Tom";
 char pass[] = "07122009ToM69";
-
-// --- Configuration API ---
-const char* host = "172.19.248.152";  // Votre IP
+const char* host = "10.44.207.38";
 const int httpPort = 8000;
+const int relais = 4; 
 
-// --- Connexion module UART WiFi ---
-SoftwareSerial wifiSerial(2, 3);  // RX=2, TX=3
-
-// --- Variables existantes ---
-const int button = 8;
-const int relais = 3;
-const int buzzer = 6;
-const int capteurLum = A0;  // Changé pour une pin analogique
-unsigned long Temps;
-unsigned long startTime = 0;
-
-int ancienEtat = 1;
-int etatBouton;
-
-bool mode = false;           // Mode local (bouton physique)
-bool etatLedAPI = false;     // Valeur lue depuis l'API (toggle du site)
-unsigned long dernierRefreshAPI = 0;
-const long intervalRefreshAPI = 2000;  // Rafraîchir l'API toutes les 2 secondes
+SoftwareSerial wifiSerial(2, 3); 
 
 void setup() {
   Serial.begin(9600);
-  wifiSerial.begin(115200);
-  
-  pinMode(button, INPUT_PULLUP);
+  wifiSerial.begin(9600); 
   pinMode(relais, OUTPUT);
-  pinMode(buzzer, OUTPUT);
+  digitalWrite(relais, LOW);
+
+  Serial.println("\n--- INITIALISATION ---");
+  envoieAT("AT+RST", 2000); // Reset propre du module
+  envoieAT("AT+CWMODE=1", 1000);
   
-  startTime = millis();
+  String cmd = "AT+CWJAP=\"" + String(ssid) + "\",\"" + String(pass) + "\"";
+  envoieAT(cmd, 8000); // On laisse du temps pour le WiFi
   
-  WiFi.init(&wifiSerial);
-  Serial.print("Connexion WiFi...");
-  WiFi.begin(ssid, pass);
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println(" OK !");
+  Serial.println("Systeme Pret !");
 }
 
 void loop() {
-  if (millis() - dernierRefreshAPI >= intervalRefreshAPI) {
-    lireEtatAPI();
-    dernierRefreshAPI = millis();
-  }
-  
-  etatBouton = digitalRead(button);
-  Temps = millis() - startTime;
-
-  Serial.print("Time: ");
-  Serial.print(Temps / 1000);
-  Serial.print(" | Mode local: ");
-  Serial.print(mode);
-  Serial.print(" | LED API: ");
-  Serial.println(etatLedAPI ? "ON" : "OFF");
-
-  if (ancienEtat == 1 && etatBouton == 0) {
-    mode = !mode;
-  }
-
-  if (etatLedAPI) {
-    digitalWrite(relais, HIGH);
-  } 
-  else if (mode || (Temps < 16000)) {
-    digitalWrite(relais, HIGH);
-  } 
-  else if ((Temps > 8000) || !mode) {
-    digitalWrite(relais, LOW);
-  }
-
-  if (Temps >= 24000) {
-    startTime = millis();
-  }
-
-  ancienEtat = etatBouton;
-  isTurnedOn();
-  
-  delay(50);
+  interrogerAPI();
+  delay(500); // On interroge toutes les 3 secondes
 }
 
-void lireEtatAPI() {
-  WiFiClient client;
+void interrogerAPI() {
+  // 1. On s'assure que toute ancienne connexion est fermée
+  wifiSerial.println("AT+CIPCLOSE"); 
+  delay(200);
+
+  // 2. Ouverture connexion TCP
+  String startTCP = "AT+CIPSTART=\"TCP\",\"" + String(host) + "\"," + String(httpPort);
+  wifiSerial.println(startTCP);
   
-  if (!client.connect(host, httpPort)) {
-    Serial.println("⚠️ Connexion API échouée");
+  // On attend que le module réponde "CONNECT" ou "OK"
+  unsigned long start = millis();
+  bool connected = false;
+  while (millis() - start < 3000) {
+    if (wifiSerial.find("CONNECT")) {
+      connected = true;
+      break;
+    }
+  }
+
+  if (!connected) {
+    Serial.println("Echec de connexion TCP au serveur.");
     return;
   }
 
-  client.print("GET /api/serre HTTP/1.1\r\n");
-  client.print("Host: ");
-  client.print(host);
-  client.print(":");
-  client.println(httpPort);
-  client.println("Connection: close");
-  client.println();
+  // 3. Envoi de la requête (On utilise "/" si ton API est à la racine)
+  String httpRequest = "GET /api/serre HTTP/1.1\r\nHost: " + String(host) + "\r\nConnection: close\r\n\r\n";
 
+  wifiSerial.print("AT+CIPSEND=");
+  wifiSerial.println(httpRequest.length());
+  delay(300); // Temps court pour recevoir le symbole '>'
+  wifiSerial.print(httpRequest);
+
+  // 4. Lecture et filtrage du JSON
+  String payload = "";
   unsigned long timeout = millis();
-  while (client.available() == 0) {
-    if (millis() - timeout > 3000) {
-      Serial.println("❌ Timeout API");
-      client.stop();
-      return;
+  while (millis() - timeout < 3000) {
+    if (wifiSerial.available()) {
+      char c = wifiSerial.read();
+      payload += c;
     }
   }
 
-  // AFFICHER TOUTE LA RÉPONSE (debug)
-  Serial.println("=== REPONSE API ===");
-  while (client.available()) {
-    String line = client.readStringUntil('\n');
-    Serial.println(line);
-  }
-  Serial.println("==================");
+  // On extrait le JSON entre les premières et dernières accolades
+  int jsonStart = payload.indexOf('{');
+  int jsonEnd = payload.lastIndexOf('}');
   
-  client.stop();
+  if (jsonStart != -1 && jsonEnd != -1) {
+    String jsonOnly = payload.substring(jsonStart, jsonEnd + 1);
+    Serial.print("JSON recu : ");
+    Serial.println(jsonOnly);
+
+    StaticJsonDocument<256> doc;
+    DeserializationError error = deserializeJson(doc, jsonOnly);
+
+    if (!error) {
+      bool etatLed = doc["etatled"]; 
+      digitalWrite(relais, etatLed ? HIGH : LOW);
+      Serial.println(etatLed ? ">>> LED ALLUMÉE" : ">>> LED ÉTEINTE");
+    } else {
+      Serial.print("Erreur JSON : ");
+      Serial.println(error.c_str());
+    }
+  } else {
+    Serial.println("Pas de JSON valide dans la reponse.");
+  }
 }
 
-void isTurnedOn() {
-  int capteurValue = analogRead(capteurLum);
-
-  if (mode || Temps < 16000) {
-    if (capteurValue > 600) {
-      digitalWrite(buzzer, HIGH);
-    } else {
-      digitalWrite(buzzer, LOW);
-      return;
-    }
+void envoieAT(String commande, int delai) {
+  wifiSerial.println(commande);
+  unsigned long start = millis();
+  while (millis() - start < delai) {
+    if (wifiSerial.available()) Serial.write(wifiSerial.read());
   }
 }
