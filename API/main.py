@@ -27,8 +27,8 @@ class EtatSerre(BaseModel):
     alarme_panne: bool
 
 donnees_actuelles = {
-    "temperature": 0.0,
-    "angle_ouverture": 5,
+    "temperature": 21,
+    "angle_ouverture": 10,
     "etatled": False,
     "alarme_panne": False,
 }
