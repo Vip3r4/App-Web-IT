@@ -1,42 +1,19 @@
-
-//////////////////////////////////////////////////////////
-//  TESTChauffage.ino                                   //
-//  PROGRAMME DE TEST, UTILISER POUR TEST UNIQUEMENT    //
-//  NE PAS UTILISER POUR PRESENTATION                   //
-//  Prog: Chauffage                                     //
-//////////////////////////////////////////////////////////
-
-
-
-
 // Entrées
-int potentioC = *PIN*;
+int capteurTemp = *PIN*;
 
 // Sorties
 int chauffage = *PIN*;
 
 void setup() {
-
   pinMode(chauffage, OUTPUT);
-
   pinMode(potentioC, INPUT);
-
-  Serial.begin(9600);
 }
 
 void loop() {
-  int EtatChauffage = DigitalRead(potentioC);
-  int potentioPINC = analogRead(potentioC);
+  int EtatChauffage = digitalRead(chauffage);
+  int Temp = analogRead(capteurTemp);
 
-  if (potPinC >= 400 && potPinC <= 600) {
-
-    digitalWrite(potentioPINC, HIGH);
-    delay(250);
-  }
-
-      if (potentioPINC >=0 ) {
-        Serial.print("Potentio: ");
-        Serial.println(potentioPINC);
-      }
-  }
+  int lectureTemp = analogRead(capteurTemp);
+  float voltage = lectureTemp * (5.0 / 1023.0);
+  float temperature = (voltage - 0.5) * 100; // Formule pour TMP36
 }
