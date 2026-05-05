@@ -57,7 +57,12 @@
                     <canvas id="tempChart" width="400" height="200"></canvas>
                 </div>
                 <div class="angle">
-                    <p>Angle d'ouverture : <input id="angleChanger" type="range" min="5" max="15"><span id="Angle">--</span></p>
+                    <p>Angle d'ouverture</p>
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <input id="angleChanger" type="range" min="5" max="15">
+                        <button type="button" id="btnMaxAngle" class="btn-max">MAX (72°)</button>
+                    </div>
+                    <span id="Angle">--</span>
                 </div>
                 <div class="led" id="led">
                     <p>Etat led : <span id="EtatLed">--</span></p>

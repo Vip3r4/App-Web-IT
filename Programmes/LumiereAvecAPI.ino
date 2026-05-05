@@ -7,6 +7,10 @@ const char* host = "10.200.153.38";
 const int httpPort = 8000;
 const int relais = 4; 
 
+unsigned long lastCycleTime = 0;
+bool cycleActive = false;
+bool manualControlAuthorized = false;
+
 SoftwareSerial wifiSerial(2, 3); 
 
 void setup() {
@@ -23,14 +27,48 @@ void setup() {
   envoieAT(cmd, 8000);
   
   Serial.println("Systeme Pret !");
+  
+  startNewCycle();
 }
 
 void loop() {
+  gererCycleAuto();
   interrogerAPI();
+  delay(100);
+}
+
+void gererCycleAuto() {
+  unsigned long currentTime = millis();
+  unsigned long elapsed = currentTime - lastCycleTime;
+  
+  if (cycleActive) {
+    if (elapsed >= 16000) {
+      digitalWrite(relais, LOW);
+      cycleActive = false;
+      manualControlAuthorized = true;
+      lastCycleTime = currentTime;
+      Serial.println("Cycle: Phase ETEINTE (8s) - Controle manuel autorise");
+    }
+  } else {
+    if (elapsed >= 8000) {
+      startNewCycle();
+    }
+  }
+}
+
+void startNewCycle() {
+  digitalWrite(relais, HIGH);
+  cycleActive = true;
+  manualControlAuthorized = false;
+  lastCycleTime = millis();
+  Serial.println("Cycle: Phase ALLUMEE (16s) - Controle manuel bloque");
 }
 
 void interrogerAPI() {
-
+  if (cycleActive) {
+    return;
+  }
+  
   wifiSerial.println("AT+CIPSTART=\"TCP\",\"" + String(host) + "\"," + String(httpPort));
   
   if (!wifiSerial.find("CONNECT")) {
@@ -50,13 +88,19 @@ void interrogerAPI() {
     String jsonOnly = "{" + wifiSerial.readStringUntil('}'); 
     jsonOnly += "}";
     
-    Serial.print("JSON : ");
+    Serial.print("JSON recu : ");
     Serial.println(jsonOnly);
 
     StaticJsonDocument<128> doc;
     if (!deserializeJson(doc, jsonOnly)) {
-      bool etatLed = doc["etatled"]; 
-      digitalWrite(relais, etatLed ? HIGH : LOW);
+      if (manualControlAuthorized) {
+        bool etatLed = doc["etatled"];
+        digitalWrite(relais, etatLed ? HIGH : LOW);
+        Serial.print("Controle manuel applique - Lampe : ");
+        Serial.println(etatLed ? "ALLUMEE" : "ETEINTE");
+      } else {
+        Serial.println("Controle manuel ignore - Phase allumee automatique en cours");
+      }
     }
   }
   

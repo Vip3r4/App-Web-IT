@@ -12,9 +12,20 @@ async function Temperature() {
         setInterval(Temperature, 500);
         Temperature();
 
+let isUpdating = false; 
+
+export function setUpdating(value) {
+    isUpdating = value;
+}
+
+window.isManualUpdate = false;
+
 async function AngleOpen() {
+            if (isUpdating) return; 
+            if (window.isManualUpdate) return;
+
             try {
-                const res = await fetch("http://localhost:8000/api/serre");
+                const res = await fetch("http://127.0.0.1:8000/api/serre");
                 const data = await res.json();
                 document.getElementById("Angle").textContent = `${data.angle_ouverture}°`;
             } catch (err) {
