@@ -23,37 +23,39 @@ document.getElementById("tempChanger").addEventListener('change', async () => {
     await sendUpdate({ temperature: val });
 });
 
-document.getElementById("angleChanger").addEventListener('change', async () => {
-    const val = Number(document.getElementById("angleChanger").value);
-    await sendUpdate({ angle_ouverture: val });
-});
+const angleSelect = document.getElementById("angleSelect");
+if (angleSelect) {
+    angleSelect.addEventListener('change', async () => {
+        const val = Number(angleSelect.value);
+        
+        window.isManualUpdate = true;
+        
+        document.getElementById("Angle").textContent = val + "°";
+        
+        const success = await sendUpdate({ angle_ouverture: val });
+        
+        setTimeout(() => {
+            window.isManualUpdate = false;
+            if (typeof AngleOpen === 'function') {
+                AngleOpen();
+            }
+        }, 1000);
+    });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
-    const btnMax = document.getElementById("btnMaxAngle");
-    const angleSlider = document.getElementById("angleChanger");
-    
-    if (btnMax) {
-        btnMax.onclick = async (e) => {
-            e.preventDefault();
-            const value72 = 72;
-
-            window.isManualUpdate = true;
-
-            document.getElementById("Angle").textContent = value72 + "°";
-
-            const originalInterval = setInterval(() => {
-                if (!window.isManualUpdate) {
-                    AngleOpen();
-                }
-            }, 500);
-
-            const success = await sendUpdate({ angle_ouverture: value72 });
-
-            setTimeout(() => {
-                window.isManualUpdate = false;
-                clearInterval(originalInterval);
-                AngleOpen();
-            }, 3000);
-        };
+    async function syncSelectWithAPI() {
+        try {
+            const res = await fetch("http://127.0.0.1:8000/api/serre");
+            const data = await res.json();
+            if (angleSelect && data.angle_ouverture) {
+                angleSelect.value = data.angle_ouverture;
+                document.getElementById("Angle").textContent = data.angle_ouverture + "°";
+            }
+        } catch (err) {
+            console.error("Erreur lors de la synchronisation du select", err);
+        }
     }
+    
+    syncSelectWithAPI();
 });

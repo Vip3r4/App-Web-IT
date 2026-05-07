@@ -396,6 +396,59 @@ input:checked + .slider:before {
   transform: translateX(26px);
 }
 
+/* ------------- */
+
+.angle-select {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(167, 139, 250, 0.4);
+    border-radius: 12px;
+    padding: 10px 16px;
+    font-family: "Inter", sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #a78bfa;
+    cursor: pointer;
+    outline: none;
+    transition: all 0.3s ease;
+    min-width: 120px;
+}
+
+.angle-select:hover {
+    background: rgba(167, 139, 250, 0.15);
+    border-color: rgba(167, 139, 250, 0.7);
+}
+
+.angle-select:focus {
+    border-color: #a78bfa;
+    box-shadow: 0 0 10px rgba(167, 139, 250, 0.3);
+}
+
+.angle-select option {
+    background: #0b0b0f;
+    color: white;
+}
+
+.angle {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.angle p {
+    margin: 0;
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.angle span {
+    font-size: 28px;
+    font-weight: 700;
+    color: #a78bfa;
+    margin-top: 5px;
+}
+
 /*-------------------------------*/
 
 footer {

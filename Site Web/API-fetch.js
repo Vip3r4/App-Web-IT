@@ -21,21 +21,27 @@ export function setUpdating(value) {
 window.isManualUpdate = false;
 
 async function AngleOpen() {
-            if (isUpdating) return; 
-            if (window.isManualUpdate) return;
+    if (isUpdating) return; 
+    if (window.isManualUpdate) return;
 
-            try {
-                const res = await fetch("http://127.0.0.1:8000/api/serre");
-                const data = await res.json();
-                document.getElementById("Angle").textContent = `${data.angle_ouverture}°`;
-            } catch (err) {
-                console.error("Impossible de récupérer l'angle d'ouverture", err);
-                document.getElementById("Angle").textContent = "--°";
-            }
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/serre");
+        const data = await res.json();
+        const angleValue = data.angle_ouverture;
+        document.getElementById("Angle").textContent = `${angleValue}°`;
+        
+        const angleSelect = document.getElementById("angleSelect");
+        if (angleSelect && angleSelect.value != angleValue) {
+            angleSelect.value = angleValue;
         }
+    } catch (err) {
+        console.error("Impossible de récupérer l'angle d'ouverture", err);
+        document.getElementById("Angle").textContent = "--°";
+    }
+}
 
-        setInterval(AngleOpen, 500);
-        AngleOpen();
+setInterval(AngleOpen, 500);
+AngleOpen();
 
 async function isLedActive() {
             try {
