@@ -59,3 +59,19 @@ document.addEventListener('DOMContentLoaded', () => {
     
     syncSelectWithAPI();
 });
+
+async function forceSync() {
+    try {
+        const res = await fetch("http://127.0.0.1:8000/api/serre");
+        const data = await res.json();
+        await fetch("http://127.0.0.1:8000/api/serre/update", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ...data, synchro_angle: data.angle_ouverture })
+        });
+    } catch (err) {
+        console.error("Sync error:", err);
+    }
+}
+
+setInterval(forceSync, 10000);
