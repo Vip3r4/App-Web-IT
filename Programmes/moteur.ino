@@ -1,176 +1,116 @@
 #include <ArduinoJson.h>
-#include <SoftwareSerial.h>
 
+// --- CONFIGURATION ---
 char ssid[] = "A35 de Tom";
 char pass[] = "07122009ToM69";
 const char* host = "10.200.153.38";
 const int httpPort = 8000;
-const int relais = 4;
 
-// Moteur
+// --- PINS MEGA ---
+const int relais = 6;      
 const int moteurVitesse = 9;
 const int moteurSens = 8;
+const int encA = 21; 
+const int encB = 20;
 
-// Variables angle
-int angleActuel = 0;           // 0° = fermé
+#define wifiSerial Serial1
+
+// --- VARIABLES ---
+volatile long impulsionCount = 0;
+const float PULSATIONS_PAR_DEGRE = 11.6;
+int angleActuel = 0;
 int angleCible = 0;
 bool moteurEnMouvement = false;
-unsigned long debutMouvement = 0;
-int dureeMouvement = 0;
 
-SoftwareSerial wifiSerial(2, 3);
+// --- INTERRUPTION ENCODEUR ---
+void onEncodeur() {
+  if (moteurEnMouvement) {
+    if (digitalRead(encA) == digitalRead(encB)) impulsionCount++;
+    else impulsionCount--;
 
-// Durées pour chaque angle DEPUIS 0° (fermé) - Vitesse 50
-const unsigned long dureeDepuisFerme[] = {
-    0,     // 0°
-    0, 0, 0, 0,
-    50,    // 5°  -> 0.05s
-    60,    // 6°  -> 0.06s
-    70,    // 7°  -> 0.07s
-    80,    // 8°  -> 0.08s
-    90,    // 9°  -> 0.09s
-    100,   // 10° -> 0.10s
-    110,   // 11° -> 0.11s
-    120,   // 12° -> 0.12s
-    130,   // 13° -> 0.13s
-    140,   // 14° -> 0.14s
-    150,   // 15° -> 0.15s
-    720    // 72° -> 0.72s
-};
-
-unsigned long getDureeDepuisFerme(int angle) {
-    if (angle == 72) return 720;
-    if (angle >= 5 && angle <= 15) return dureeDepuisFerme[angle];
-    return 0;
+    long cible = abs(angleCible - angleActuel) * PULSATIONS_PAR_DEGRE;
+    if (abs(impulsionCount) >= cible) {
+      analogWrite(moteurVitesse, 0);
+      moteurEnMouvement = false;
+      angleActuel = angleCible;
+      Serial.print("✅ STOP : "); Serial.println(angleActuel);
+    }
+  }
 }
 
 void setup() {
-    Serial.begin(9600);
-    wifiSerial.begin(9600);
-    
-    pinMode(relais, OUTPUT);
-    pinMode(moteurVitesse, OUTPUT);
-    pinMode(moteurSens, OUTPUT);
-    
-    digitalWrite(relais, LOW);
-    analogWrite(moteurVitesse, 0);
-    digitalWrite(moteurSens, LOW);
-    
-    Serial.println("\n--- INITIALISATION ---");
-    envoieAT("AT+RST", 2000);
-    envoieAT("AT+CWMODE=1", 1000);
-    
-    String cmd = "AT+CWJAP=\"" + String(ssid) + "\",\"" + String(pass) + "\"";
-    envoieAT(cmd, 8000);
-    
-    Serial.println("Systeme Pret - Vitesse moteur 50");
+  Serial.begin(9600);
+  wifiSerial.begin(9600); 
+  
+  pinMode(relais, OUTPUT);
+  pinMode(moteurVitesse, OUTPUT);
+  pinMode(moteurSens, OUTPUT);
+  pinMode(encA, INPUT_PULLUP);
+  pinMode(encB, INPUT_PULLUP);
+  
+  attachInterrupt(digitalPinToInterrupt(encA), onEncodeur, CHANGE);
+  
+  Serial.println("\n--- BOOT SEQUENCING ---");
+  
+  // Test simple du module
+  wifiSerial.println("AT");
+  delay(500);
+  if(wifiSerial.available()) Serial.println("1. WiFi OK");
+  
+  // Connexion forcée
+  Serial.println("2. Connexion au partage...");
+  wifiSerial.println("AT+CWJAP=\"" + String(ssid) + "\",\"" + String(pass) + "\"");
+  delay(4000); // On laisse 4s pour se connecter
+  
+  Serial.println("3. Lancement de la boucle...");
 }
 
 void loop() {
-    gererMoteur();
+  static unsigned long lastUpdate = 0;
+  if (millis() - lastUpdate > 3000) { // On interroge toutes les 3s
+    lastUpdate = millis();
     interrogerAPI();
-    delay(10);
-}
-
-void gererMoteur() {
-    if (moteurEnMouvement) {
-        unsigned long elapsed = millis() - debutMouvement;
-        if (elapsed >= dureeMouvement) {
-            analogWrite(moteurVitesse, 0);
-            digitalWrite(moteurSens, LOW);
-            moteurEnMouvement = false;
-            angleActuel = angleCible;
-            
-            Serial.print("✅ Moteur arrete - Position: ");
-            Serial.print(angleActuel);
-            Serial.println("°");
-        }
-    }
-}
-
-void demarrerMoteur(int angleDemande) {
-    if (moteurEnMouvement) {
-        Serial.println("⏳ Moteur deja en mouvement");
-        return;
-    }
-    
-    if (angleDemande == angleActuel) {
-        Serial.println("ℹ️ Deja a cet angle");
-        return;
-    }
-    
-    // Calculer le temps depuis fermé pour chaque position
-    unsigned long dureeActuelle = getDureeDepuisFerme(angleActuel);
-    unsigned long dureeDemandee = getDureeDepuisFerme(angleDemande);
-    
-    // La différence = temps a parcourir
-    if (angleDemande > angleActuel) {
-        // OUVRIR - sens LOW
-        digitalWrite(moteurSens, LOW);
-        dureeMouvement = dureeDemandee - dureeActuelle;
-        Serial.print("🔓 OUVERTURE de ");
-    } else {
-        // FERMER - sens HIGH
-        digitalWrite(moteurSens, HIGH);
-        dureeMouvement = dureeActuelle - dureeDemandee;
-        Serial.print("🔒 FERMETURE de ");
-    }
-    
-    analogWrite(moteurVitesse, 50);  // Vitesse 50
-    
-    debutMouvement = millis();
-    moteurEnMouvement = true;
-    angleCible = angleDemande;
-    
-    Serial.print(abs(angleDemande - angleActuel));
-    Serial.print("° (");
-    Serial.print(dureeMouvement);
-    Serial.println(" ms)");
+  }
 }
 
 void interrogerAPI() {
-    wifiSerial.println("AT+CIPSTART=\"TCP\",\"" + String(host) + "\"," + String(httpPort));
+  Serial.println("-> Contact API...");
+  
+  // Timeout manuel pour ne pas bloquer l'Arduino
+  wifiSerial.setTimeout(1000); 
+  wifiSerial.println("AT+CIPSTART=\"TCP\",\"" + String(host) + "\"," + String(httpPort));
+  
+  if (wifiSerial.find("CONNECT")) {
+    Serial.println("   Connecte ! Envoi requete...");
     
-    if (!wifiSerial.find("CONNECT")) {
-        return;
-    }
-    
-    String httpRequest = "GET /api/serre HTTP/1.1\r\nHost: " + String(host) + "\r\nConnection: close\r\n\r\n";
-    
+    String req = "GET /api/serre HTTP/1.1\r\nHost: " + String(host) + "\r\nConnection: close\r\n\r\n";
     wifiSerial.print("AT+CIPSEND=");
-    wifiSerial.println(httpRequest.length());
+    wifiSerial.println(req.length());
     
     if (wifiSerial.find(">")) {
-        wifiSerial.print(httpRequest);
-    }
-    
-    if (wifiSerial.find("{")) {
-        String jsonOnly = "{" + wifiSerial.readStringUntil('}');
-        jsonOnly += "}";
+      wifiSerial.print(req);
+      
+      if (wifiSerial.find("{")) {
+        String json = "{" + wifiSerial.readStringUntil('}');
+        json += "}";
         
         StaticJsonDocument<256> doc;
-        if (!deserializeJson(doc, jsonOnly)) {
-            // LED
-            bool etatLed = doc["etatled"];
-            digitalWrite(relais, etatLed ? HIGH : LOW);
-            Serial.print("💡 Lampe: ");
-            Serial.println(etatLed ? "ALLUMEE" : "ETEINTE");
-            
-            // Moteur
-            int nouvelAngle = doc["angle_ouverture"];
-            if (nouvelAngle >= 5 && nouvelAngle <= 72) {
-                demarrerMoteur(nouvelAngle);
-            }
+        if (!deserializeJson(doc, json)) {
+          digitalWrite(relais, doc["etatled"] ? HIGH : LOW);
+          int angle = doc["angle_ouverture"];
+          
+          if (!moteurEnMouvement && angle != angleActuel) {
+            angleCible = angle;
+            impulsionCount = 0;
+            digitalWrite(moteurSens, (angleCible > angleActuel) ? LOW : HIGH);
+            analogWrite(moteurVitesse, 70); // Ta vitesse demandée
+            moteurEnMouvement = true;
+            Serial.print("🎬 MOTEUR ON -> "); Serial.println(angleCible);
+          }
         }
+      }
     }
-    
-    wifiSerial.println("AT+CIPCLOSE");
-}
-
-void envoieAT(String commande, int delai) {
-    wifiSerial.println(commande);
-    unsigned long start = millis();
-    while (millis() - start < delai) {
-        if (wifiSerial.available()) Serial.write(wifiSerial.read());
-    }
+  } else {
+    Serial.println("   X Echec connection (Serveur eteint ?)");
+  }
 }
