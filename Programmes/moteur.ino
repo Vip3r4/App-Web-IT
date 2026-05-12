@@ -22,14 +22,14 @@ int angleActuel = 0;
 int angleCible = 0;
 bool moteurEnMouvement = false;
 
-// --- INTERRUPTION ENCODEUR ---
 void onEncodeur() {
   if (moteurEnMouvement) {
     if (digitalRead(encA) == digitalRead(encB)) impulsionCount++;
     else impulsionCount--;
 
-    long cible = abs(angleCible - angleActuel) * PULSATIONS_PAR_DEGRE;
-    if (abs(impulsionCount) >= cible) {
+    long cibleNecessaire = abs((long)(angleCible - angleActuel) * PULSATIONS_PAR_DEGRE);
+    
+    if (abs(impulsionCount) >= cibleNecessaire) {
       analogWrite(moteurVitesse, 0);
       moteurEnMouvement = false;
       angleActuel = angleCible;
@@ -76,7 +76,6 @@ void loop() {
 void interrogerAPI() {
   Serial.println("-> Contact API...");
   
-  // Timeout manuel pour ne pas bloquer l'Arduino
   wifiSerial.setTimeout(1000); 
   wifiSerial.println("AT+CIPSTART=\"TCP\",\"" + String(host) + "\"," + String(httpPort));
   
