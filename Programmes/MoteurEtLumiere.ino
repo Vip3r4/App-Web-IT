@@ -13,10 +13,14 @@ const int moteurSens = 8;      // Direction moteur
 const int encA = 21;           // Encodeur A
 const int encB = 20;           // Encodeur B
 
-// --- COMMUNICATION ---
-#define wifiSerial Serial1      // WiFi sur Serial1 (TX=18, RX=19 sur Mega)
+// --- NOUVEAUX PINS ---
+const int buzzer = 22;         // Buzzer
+const int capteurLum = A0;     // Capteur de lumière analogique
 
-// --- VARIABLES LAMPE (cycle auto + manuel) ---
+// --- COMMUNICATION ---
+#define wifiSerial Serial1
+
+// --- VARIABLES LAMPE ---
 unsigned long lastCycleTime = 0;
 bool cycleActive = false;
 bool manualControlAuthorized = false;
@@ -27,6 +31,12 @@ const float PULSATIONS_PAR_DEGRE = 11.6;
 int angleActuel = 0;
 int angleCible = 0;
 bool moteurEnMouvement = false;
+
+// --- VARIABLES CAPTEUR LUMIERE & BUZZER ---
+const int SEUIL_LUMIERE = 300;        // Seuil d'obscurité (à ajuster)
+unsigned long lastLightCheckTime = 0;
+const unsigned long INTERVAL_LIGHT_CHECK = 500;  // Vérifie toutes les 500ms
+bool lampeDevraitEtreAllumee = false;  // La lampe DOIT être allumée selon consigne
 
 // --- INTERRUPTION ENCODEUR ---
 void onEncodeur() {
@@ -50,12 +60,19 @@ void onEncodeur() {
 }
 
 // --- FONCTIONS LAMPE ---
+void setLampe(bool allumee) {
+  digitalWrite(relais, allumee ? HIGH : LOW);
+  Serial.print("💡 Lampe : ");
+  Serial.println(allumee ? "ALLUMEE" : "ETEINTE");
+}
+
 void startNewCycle() {
-  digitalWrite(relais, HIGH);
+  setLampe(true);
   cycleActive = true;
   manualControlAuthorized = false;
+  lampeDevraitEtreAllumee = true;   // Pendant cycle auto, lampe DOIT être allumée
   lastCycleTime = millis();
-  Serial.println("Cycle: Phase ALLUMEE (16s) - Lampe auto ON, moteur actif");
+  Serial.println("Cycle: Phase ALLUMEE (16s)");
 }
 
 void gererCycleAuto() {
@@ -64,11 +81,12 @@ void gererCycleAuto() {
   
   if (cycleActive) {
     if (elapsed >= 16000) {
-      digitalWrite(relais, LOW);
+      setLampe(false);
       cycleActive = false;
       manualControlAuthorized = true;
+      lampeDevraitEtreAllumee = false;  // Lampe DOIT être éteinte
       lastCycleTime = currentTime;
-      Serial.println("Cycle: Phase ETEINTE (8s) - Controle lampe manuel autorise");
+      Serial.println("Cycle: Phase ETEINTE (8s) - Controle manuel autorise");
     }
   } else {
     if (!moteurEnMouvement && elapsed >= 8000) {
@@ -77,21 +95,39 @@ void gererCycleAuto() {
   }
 }
 
-// --- FONCTIONS COMMUNICATION ---
-void envoieAT(String commande, int delai) {
-  wifiSerial.println(commande);
-  unsigned long start = millis();
-  while (millis() - start < delai) {
-    if (wifiSerial.available()) {
-      Serial.write(wifiSerial.read());
-    }
+// --- FONCTION GESTION CAPTEUR + BUZZER ---
+void gererCapteurEtBuzzer() {
+  static unsigned long lastPrint = 0;
+  unsigned long currentTime = millis();
+  
+  int valeurLumiere = analogRead(capteurLum);
+  
+  // Affiche la valeur toutes les secondes pour le debug
+  if (currentTime - lastPrint >= 1000) {
+    lastPrint = currentTime;
+    Serial.print("📊 Capteur = ");
+    Serial.print(valeurLumiere);
+    Serial.print(" | Seuil = ");
+    Serial.print(SEUIL_LUMIERE);
+    Serial.print(" | Lampe doit être = ");
+    Serial.print(lampeDevraitEtreAllumee ? "ALLUMEE" : "ETEINTE");
+    Serial.print(" | Détection = ");
+    Serial.println(valeurLumiere > SEUIL_LUMIERE ? "SOMBRE" : "CLAIR");
+  }
+  
+  // LOGIQUE BUZZER CORRIGÉE :
+  // SI lampe DOIT être allumée ET capteur > seuil (obscurité) → buzzer ON
+  // SINON → buzzer OFF
+  if (lampeDevraitEtreAllumee && valeurLumiere > SEUIL_LUMIERE) {
+    digitalWrite(buzzer, HIGH);
+    Serial.println("🔊 ALERTE - Obscurité détectée alors que lampe devrait être allumée !");
+  } else {
+    digitalWrite(buzzer, LOW);
   }
 }
 
+// --- FONCTIONS COMMUNICATION ---
 void interrogerAPI() {
-  // PLUS BLOQUANT ! On interroge TOUJOURS l'API
-  // Seule l'application de la commande lampe est conditionnée
-  
   Serial.println("\n--- Interrogation API ---");
   
   wifiSerial.println("AT+CIPSTART=\"TCP\",\"" + String(host) + "\"," + String(httpPort));
@@ -120,39 +156,38 @@ void interrogerAPI() {
     StaticJsonDocument<256> doc;
     if (!deserializeJson(doc, jsonOnly)) {
       
-      // --- GESTION DE LA LAMPE (condition modifiée) ---
-      // On applique la lampe UNIQUEMENT si on n'est PAS en cycle auto
+      // --- GESTION DE LA LAMPE (commande manuelle) ---
       if (!cycleActive && manualControlAuthorized) {
         bool etatLed = doc["etatled"];
-        digitalWrite(relais, etatLed ? HIGH : LOW);
-        Serial.print("💡 Lampe (manuel) : ");
+        setLampe(etatLed);
+        lampeDevraitEtreAllumee = etatLed;  // Met à jour ce que la lampe DOIT être
+        Serial.print("🎮 Commande manuelle lampe : ");
         Serial.println(etatLed ? "ALLUMEE" : "ETEINTE");
       } else if (cycleActive) {
-        Serial.println("⚠️ Lampe ignoree - Cycle auto en cours");
+        Serial.println("⚠️ Commande lampe ignorée - Cycle auto en cours");
       }
       
-      // --- GESTION DU MOTEUR (TOUJOURS EXECUTEE, MEME PENDANT CYCLE LAMPE) ---
+      // --- GESTION DU MOTEUR ---
       int angle = doc["angle_ouverture"];
       
       if (!moteurEnMouvement && angle != angleActuel) {
         angleCible = angle;
         impulsionCount = 0;
         
-        // Définir la direction
         if (angleCible > angleActuel) {
-          digitalWrite(moteurSens, LOW);  // Un sens
+          digitalWrite(moteurSens, HIGH);
         } else {
-          digitalWrite(moteurSens, HIGH); // Autre sens
+          digitalWrite(moteurSens, LOW);
         }
         
         analogWrite(moteurVitesse, 50);
         moteurEnMouvement = true;
-        Serial.print("🎬 MOTEUR ACTIF -> Angle cible : ");
+        Serial.print("🎬 MOTEUR -> Angle cible : ");
         Serial.println(angleCible);
       } else if (moteurEnMouvement) {
-        Serial.println("⏳ Moteur deja en mouvement...");
+        Serial.println("⏳ Moteur déjà en mouvement...");
       } else if (angle == angleActuel) {
-        Serial.println("✓ Angle deja atteint");
+        Serial.println("✓ Angle déjà atteint");
       }
     } else {
       Serial.println("❌ Erreur parsing JSON");
@@ -171,13 +206,19 @@ void setup() {
   pinMode(moteurSens, OUTPUT);
   pinMode(encA, INPUT_PULLUP);
   pinMode(encB, INPUT_PULLUP);
+  pinMode(buzzer, OUTPUT);
   
   attachInterrupt(digitalPinToInterrupt(encA), onEncodeur, CHANGE);
   
   analogWrite(moteurVitesse, 0);
-  digitalWrite(relais, LOW);
+  setLampe(false);
+  digitalWrite(buzzer, LOW);
   
   Serial.println("\n=== INITIALISATION ===");
+  Serial.println("🔧 Détection lampe défaillante");
+  Serial.println("   Le buzzer sonne en CONTINU si :");
+  Serial.println("   - La lampe DOIT être allumée (cycle ou commande)");
+  Serial.println("   - Mais le capteur ne détecte PAS de lumière");
   
   wifiSerial.println("AT");
   delay(500);
@@ -196,6 +237,7 @@ void loop() {
   static unsigned long lastAPICall = 0;
   
   gererCycleAuto();
+  gererCapteurEtBuzzer();  // Vérifie lumière + buzzer continu
   
   if (millis() - lastAPICall > 200) {
     lastAPICall = millis();
