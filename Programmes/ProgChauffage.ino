@@ -1,111 +1,119 @@
-#include <Arduino.h> 
+const int PIN_CAPTEUR_TEMP = A0;    // Capteur TMP36 (ANALOGIQUE)
+const int PIN_RELAIS = 4;            // Relais (DIGITAL)
 
-const int PIN_CAPTEUR_TEMP = A2;        // Broche du capteur TMP36
-const int PIN_RELAIS_CHAUFFAGE = 2;     // Broche du relais
-const int PIN_LED_TEMOIN = 13;          // LED témoin (optionnel)
+const float CONSIGNE = 22.5;
+const float HYSTERESIS = 1.0;
 
-float TEMPERATURE_CONSIGNE = 22.5;      // Température souhaitée en °C
-float MARGE_HYSTERESIS = 1.0;           // Marge avant réallumage (ex: 1°C)
 
 float temperatureActuelle = 0.0;
 bool chauffageAllume = false;
 unsigned long dernierAffichage = 0;
-const unsigned long INTERVALLE_AFFICHAGE = 1000;  // Affiche toutes les 1 seconde
+unsigned long dernierAllumage = 0;
+const unsigned long DELAI_MINIMUM = 5000;
 
 void setup() {
   Serial.begin(9600);
   
-  pinMode(PIN_RELAIS_CHAUFFAGE, OUTPUT);
-  pinMode(PIN_LED_TEMOIN, OUTPUT);
+  pinMode(PIN_RELAIS, OUTPUT);
+  digitalWrite(PIN_RELAIS, LOW);
   
-  digitalWrite(PIN_RELAIS_CHAUFFAGE, LOW);
-  digitalWrite(PIN_LED_TEMOIN, LOW);
-  
-  Serial.println("======================================");
-  Serial.println("SYSTEME DE CONTROLE DE TEMPERATURE");
-  Serial.println("Capteur: TMP36");
-  Serial.println("======================================");
-  Serial.print("Temperature cible: ");
-  Serial.print(TEMPERATURE_CONSIGNE);
+  Serial.println("==========================================");
+  Serial.println("CONTROLE TEMPERATURE - SYSTEME PRET");
+  Serial.println("==========================================");
+  Serial.print("Consigne: ");
+  Serial.print(CONSIGNE);
   Serial.println(" °C");
   Serial.print("Hysteresis: +/- ");
-  Serial.print(MARGE_HYSTERESIS);
+  Serial.print(HYSTERESIS);
   Serial.println(" °C");
-  Serial.println("--------------------------------------");
+  Serial.println("---");
+  Serial.println("Test relais...");
+  
+  digitalWrite(PIN_RELAIS, HIGH);
+  delay(500);
+  digitalWrite(PIN_RELAIS, LOW);
+  delay(500);
+  
+  Serial.println("Test termine. Debut du controle.");
+  Serial.println("==========================================");
 }
 
 void loop() {
-  lireCapteurTemperature();
+  lireTemperature();
   
   controlerTemperature();
   
-  if (millis() - dernierAffichage >= INTERVALLE_AFFICHAGE) {
-    afficherEtat();
-    dernierAffichage = millis();
-  }
+  afficherInfos();
   
   delay(100);
 }
 
-void lireCapteurTemperature() {
+void lireTemperature() {
   int lectureBrute = analogRead(PIN_CAPTEUR_TEMP);
-  
-  // Conversion en tension (0-5V)
   float tension = lectureBrute * (5.0 / 1023.0);
-  
-  // Conversion en température pour TMP36
-  // TMP36 donne 0.5V à 0°C, +10mV par °C
   temperatureActuelle = (tension - 0.5) * 100.0;
-  
 }
 
-// ===== CONTRÔLE DU CHAUFFAGE (avec hystérésis) =====
 void controlerTemperature() {
+  if (millis() - dernierAllumage < DELAI_MINIMUM && chauffageAllume == false) {
+    return;
+  }
+  
   if (chauffageAllume) {
-    // Si chauffage allumé, on éteint quand on dépasse la consigne
-    if (temperatureActuelle >= TEMPERATURE_CONSIGNE) {
+    if (temperatureActuelle >= CONSIGNE) {
       eteindreChauffage();
     }
   } else {
-    // Si chauffage éteint, on allume quand on est en dessous de (consigne - marge)
-    if (temperatureActuelle <= (TEMPERATURE_CONSIGNE - MARGE_HYSTERESIS)) {
+    if (temperatureActuelle <= (CONSIGNE - HYSTERESIS)) {
       allumerChauffage();
     }
   }
 }
 
 void allumerChauffage() {
-  digitalWrite(PIN_RELAIS_CHAUFFAGE, HIGH);
-  digitalWrite(PIN_LED_TEMOIN, HIGH);
+  digitalWrite(PIN_RELAIS, HIGH);
   chauffageAllume = true;
-  Serial.print("[ACTION] ");
+  dernierAllumage = millis();
+  
+  Serial.print("[");
   Serial.print(millis() / 1000);
-  Serial.println("s - CHAUFFAGE ALLUME");
+  Serial.println("s] 🔥🔥🔥 CHAUFFAGE ALLUME 🔥🔥🔥");
 }
 
 void eteindreChauffage() {
-  digitalWrite(PIN_RELAIS_CHAUFFAGE, LOW);
-  digitalWrite(PIN_LED_TEMOIN, LOW);
+  digitalWrite(PIN_RELAIS, LOW);
   chauffageAllume = false;
-  Serial.print("[ACTION] ");
+  
+  Serial.print("[");
   Serial.print(millis() / 1000);
-  Serial.println("s - CHAUFFAGE ETEINT");
+  Serial.println("s] ❄️❄️❄️ CHAUFFAGE ETEINT ❄️❄️❄️");
 }
 
-void afficherEtat() {
-  Serial.print("Temp: ");
-  Serial.print(temperatureActuelle, 1);  // 1 décimale
-  Serial.print("°C | Consigne: ");
-  Serial.print(TEMPERATURE_CONSIGNE, 1);
-  Serial.print("°C | Chauffage: ");
-  Serial.println(chauffageAllume ? "ON " : "OFF");
+void afficherInfos() {
+  if (millis() - dernierAffichage >= 1000) {
+    Serial.print("Temp: ");
+    Serial.print(temperatureActuelle, 1);
+    Serial.print("°C | Consigne: ");
+    Serial.print(CONSIGNE, 1);
+    Serial.print("°C | Chauffage: ");
+    Serial.print(chauffageAllume ? "ON " : "OFF");
+    
+    Serial.print(" | Relais: ");
+    Serial.print(digitalRead(PIN_RELAIS) ? "HIGH" : "LOW");
+    
+    float tension = analogRead(PIN_CAPTEUR_TEMP) * (5.0 / 1023.0);
+    Serial.print(" | Tension: ");
+    Serial.print(tension, 2);
+    Serial.println("V");
+    
+    dernierAffichage = millis();
+  }
 }
 
 void changerConsigne(float nouvelleConsigne) {
-  if (nouvelleConsigne >= 0 && nouvelleConsigne <= 50) {
-    TEMPERATURE_CONSIGNE = nouvelleConsigne;
-    Serial.print("[CONSIGNE] Nouvelle cible: ");
-    Serial.print(TEMPERATURE_CONSIGNE);
+  if (nouvelleConsigne >= 10.0 && nouvelleConsigne <= 40.0) {
+    Serial.print("Nouvelle consigne demandee: ");
+    Serial.print(nouvelleConsigne);
     Serial.println(" °C");
   }
 }
