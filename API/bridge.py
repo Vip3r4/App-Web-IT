@@ -1,10 +1,12 @@
 import serial
 import requests
 import time
+import json
 
-arduino_port = "COM3" 
+arduino_port = "COM20" 
 baud_rate = 9600
 api_url = "http://127.0.0.1:8000/api/serre/update"
+get_url = "http://127.0.0.1:8000/api/serre"
 
 print(f"--- Lancement du Pont Arduino -> API ---")
 
@@ -25,28 +27,40 @@ while True:
             if line:
                 print(f"Brut reçu : {line}")
                 
-               
+                if line.startswith("POS:"):
+                    angle = int(line.split(":")[1])
+                    current_res = requests.get(get_url)
+                    current_data = current_res.json()
+                    current_data["angle_ouverture"] = angle
+                    current_data["synchro_angle"] = angle
+                    requests.post(api_url, json=current_data)
+                    print(f"📐 Position synchronisée: {angle}°")
+                    continue
+                
                 parts = line.split(',')
                 
                 if len(parts) == 5:
+                    try:
+                        current_res = requests.get(get_url)
+                        current_data = current_res.json()
+                        current_etatled = current_data.get("etatled", False)
+                    except:
+                        current_etatled = False
                     
                     data = {
                         "temperature": float(parts[0]),
                         "angle_ouverture": int(parts[1]),
                         "eclairage_actif": bool(int(parts[2])),
                         "alarme_panne": bool(int(parts[3])),
-                        "etatled": False
+                        "etatled": current_etatled
                     }
                     
-
                     response = requests.post(api_url, json=data)
                     
                     if response.status_code == 200:
-                        print("✅ API mise à jour avec succès !")
+                        print(f"✅ API mise à jour")
                     else:
                         print(f"⚠️ Erreur API (Code {response.status_code})")
-                else:
-                    print("❌ Format de données incorrect (attendu: 5 valeurs)")
                     
     except Exception as e:
         print(f"Erreur pendant la boucle : {e}")

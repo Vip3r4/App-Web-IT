@@ -5,7 +5,12 @@ import serial
 
 app = FastAPI()
 
-ser = serial.Serial('COM3', 9600)
+try:
+    ser = serial.Serial('COM20', 9600)
+    print("✅ Port COM17 connecté à l'API")
+except serial.serialutil.SerialException:
+    ser = None
+    print("⚠️ COM17 occupé ou indisponible. L'API tourne sans accès USB direct.")
 
 app.add_middleware(
     CORSMiddleware,
@@ -27,8 +32,8 @@ class EtatSerre(BaseModel):
     alarme_panne: bool
 
 donnees_actuelles = {
-    "temperature": 21,
-    "angle_ouverture": 10,
+    "temperature": 0.0,
+    "angle_ouverture": 5,
     "etatled": False,
     "alarme_panne": False,
 }
@@ -41,7 +46,7 @@ def obtenir_etat():
 def mettre_a_jour(nouvel_etat: EtatSerre):
     global donnees_actuelles
 
-    nouvel_etat.angle_ouverture = max(5, min(15, nouvel_etat.angle_ouverture))
+    nouvel_etat.angle_ouverture = max(0, min(72, nouvel_etat.angle_ouverture))
     nouvel_etat.temperature = max(14, min(28, nouvel_etat.temperature))
 
     donnees_actuelles = nouvel_etat.dict()
